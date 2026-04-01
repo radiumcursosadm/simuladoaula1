@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Simulador - Equipamentos Radiológicos | Radium Cursos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f7;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 30px 20px;
+            color: #1e2a3a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            padding: 20px 25px 35px;
+        }
+
+        .header-simulador {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dcecf3;
+            padding-bottom: 20px;
+        }
+        .titulo-principal {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0b3b5f, #1b6b87);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .radium {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f5c7a;
+            margin: 6px 0 4px;
+        }
+        .professor {
+            font-size: 1rem;
+            color: #2c6e9e;
+            background: #eef3fc;
+            display: inline-block;
+            padding: 5px 18px;
+            border-radius: 40px;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+        .sub {
+            color: #2c6e9e;
+            border-left: 4px solid #2c6e9e;
+            padding-left: 15px;
+            margin: 10px 0 15px 0;
+            font-weight: 500;
+        }
+        .aluno-area {
+            background: #f0f6fa;
+            border-radius: 60px;
+            padding: 12px 20px;
+            margin: 15px 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .aluno-label {
+            font-weight: 600;
+            color: #0b3b5f;
+        }
+        #nomeAluno {
+            flex: 2;
+            min-width: 180px;
+            padding: 10px 18px;
+            border: 1px solid #cbdde6;
+            border-radius: 40px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        #nomeAluno:focus {
+            border-color: #1b6b87;
+            box-shadow: 0 0 0 2px rgba(27,107,135,0.2);
+        }
+        .registro-info {
+            font-size: 0.8rem;
+            background: #e2edf2;
+            padding: 6px 12px;
+            border-radius: 30px;
+            color: #1f5e7a;
+        }
+
+        .questoes-area {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            margin: 25px 0 30px;
+        }
+
+        .questao-card {
+            background: #f9fbfd;
+            border-radius: 24px;
+            border: 1px solid #e2edf2;
+            padding: 20px 24px;
+            transition: 0.1s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .questao-card:hover {
+            background: #ffffff;
+            border-color: #bed6e3;
+        }
+
+        .questao-num {
+            display: inline-block;
+            background: #0b3b5f;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 40px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .banca-ano {
+            font-size: 0.7rem;
+            color: #2c6e9e;
+            background: #eaf4f9;
+            display: inline-block;
+            margin-left: 12px;
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
+        .enunciado {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 18px;
+            line-height: 1.4;
+            color: #0a2c3d;
+        }
+        .afirmativa {
+            margin: 10px 0 6px 20px;
+            font-weight: normal;
+            font-size: 0.96rem;
+            color: #1f3b4c;
+        }
+
+        .alternativas {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-left: 8px;
+            margin-top: 12px;
+        }
+
+        .alt-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 6px 8px;
+            border-radius: 14px;
+            transition: background 0.1s;
+            cursor: pointer;
+        }
+
+        .alt-item:hover {
+            background: #eef3fc;
+        }
+
+        input[type="radio"] {
+            margin-top: 3px;
+            accent-color: #1b6b87;
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        label {
+            font-size: 0.96rem;
+            line-height: 1.4;
+            color: #1f3b4c;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .botoes-acao {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0 15px;
+        }
+
+        button {
+            background: #1f6e8c;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        button:hover {
+            background: #0e4d66;
+            transform: translateY(-1px);
+        }
+
+        .btn-sec {
+            background: #4b6f86;
+        }
+
+        .btn-sec:hover {
+            background: #2c556e;
+        }
+
+        .resultado-area {
+            background: #e2f0f5;
+            border-radius: 28px;
+            padding: 20px 25px;
+            margin-top: 20px;
+            border-left: 6px solid #0b3b5f;
+        }
+
+        .resultado-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nota {
+            background: #0f5c7a;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+        }
+
+        .gabarito-lista {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            max-height: 320px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+
+        .gabarito-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2edf2;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: baseline;
+        }
+
+        .melhorias {
+            background: #fff6e0;
+            padding: 15px 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+        }
+
+        .impressao-info {
+            margin-top: 15px;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #3a6b8c;
+        }
+        .registro-msg {
+            background: #cbe5f0;
+            padding: 8px 15px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.75rem;
+            color: #608b9e;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 15px;
+            }
+            .questao-card {
+                padding: 15px;
+            }
+            button {
+                padding: 8px 18px;
+            }
+            .titulo-principal {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-simulador">
+        <div class="titulo-principal">📡 Simulador - Equipamentos Radiológicos</div>
+        <div class="radium">Radium Cursos</div>
+        <div class="professor">✍️ Desenvolvido pelo Prof. Jorge Alberto</div>
+    </div>
+    <div class="sub">Baseado em questões oficiais de concurso (PDF) • 20 questões • Técnico em Radiologia</div>
+
+    <!-- Identificação do aluno -->
+    <div class="aluno-area">
+        <span class="aluno-label">👨‍🎓 Nome do aluno:</span>
+        <input type="text" id="nomeAluno" placeholder="Digite seu nome completo" autocomplete="off">
+        <div class="registro-info">📌 Seu desempenho será registrado internamente</div>
+    </div>
+
+    <div id="simulado-app">
+        <div id="questoes-container" class="questoes-area"></div>
+
+        <div class="botoes-acao">
+            <button id="btnCorrigir">✅ Corrigir Simulado</button>
+            <button id="btnLimpar" class="btn-sec">🔄 Limpar respostas</button>
+            <button id="btnImprimirPDF" class="btn-sec">🖨️ Imprimir / PDF do Resultado</button>
+        </div>
+
+        <div id="resultadoPanel" style="display: none;"></div>
+        <div id="registroFeedback" class="registro-msg" style="display: none;"></div>
+    </div>
+    <footer>Simulado com base em questões reais de concursos — Gabarito oficial incluso. Aperfeiçoe seus conhecimentos!</footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // DADOS DAS QUESTÕES COM BANCA E ANO (extraídos do PDF)
+    // A questão 13 foi ajustada para exibir o enunciado completo e as afirmativas I a IV, conforme PDF original.
+    // --------------------------------------------------------------
+    const questoes = [
+        { id: 1, enunciado: "Assinale a alternativa incorreta:", alternativas: ["A finalidade do cone é limitar a largura do feixe dos raios X.", "O diafragma regula a largura do feixe dos raios X.", "Quando se usa cones ou cilindros, deve-se aumentar a tensão.", "A grade é um conjunto de lâminas de alumínio que compõe o Bucky."], correta: "D", tema: "Equipamentos / Grade", banca: "POLICON", ano: 2024 },
+        { id: 2, enunciado: "Os tubos de raios X são essenciais para a produção de raios X. Assinale a alternativa que descreve corretamente um dos componentes principais e sua função:", alternativas: ["O cátodo é responsável pela emissão de raios X ao ser aquecido.", "O ânodo gera elétrons e os acelera em direção ao cátodo.", "A janela do tubo é feita de material absorvente que impede a saída de radiação.", "O filamento do cátodo, ao ser aquecido, emite elétrons acelerados em direção ao ânodo, gerando raios X.", "O envelope de vidro absorve a radiação X gerada, evitando emissão."], correta: "D", tema: "Tubo de raios X / Componentes", banca: "Avança SP", ano: 2024 },
+        { id: 3, enunciado: "Tipo de gerador de raios X que proporciona tensão constante e contínua durante a exposição, permitindo maior qualidade de imagem e menor dose:", alternativas: ["Gerador monofásico de meia-onda", "Gerador trifásico de seis pulsos", "Gerador trifásico de doze pulsos", "Gerador de alta frequência", "Gerador de onda pulsada"], correta: "D", tema: "Geradores / Alta frequência", banca: "Avança SP", ano: 2024 },
+        { id: 4, enunciado: "Para melhorar a qualidade de imagem em uma radiografia analógica do abdome, minimizando diferença de densidade entre estruturas, qual técnica mais recomendada?", alternativas: ["Utilizar um filtro compensador em cunha para ajustar a densidade.", "Aumentar a miliamperagem (mA) para melhor penetração.", "Reduzir a distância feixe-receptor para aumentar intensidade.", "Aplicar maior quilovoltagem (kV) para compensar variações.", "Ajustar o ângulo do feixe para reduzir dispersão."], correta: "A", tema: "Processamento / Filtros compensadores", banca: "COPEVE-UFAL", ano: 2024 },
+        { id: 5, enunciado: "Para reduzir a radiação gama resultante dos exames de raios-X, são usados cones e diafragmas (quanto menor a área irradiada melhor a imagem) e grades para filtragem.", alternativas: ["Certo", "Errado"], correta: "B", tema: "Proteção / Radiação gama", banca: "IGEDUC", ano: 2023 },
+        { id: 6, enunciado: "A principal função do colimador em um equipamento de radiologia é:", alternativas: ["Calibrar a dose de radiação utilizada.", "Controlar o tempo de exposição da radiografia.", "Ajustar a posição do paciente na mesa.", "Limitar o feixe de radiação para a região de interesse.", "Controlar a intensidade da radiação emitida."], correta: "D", tema: "Colimadores / Limitação do feixe", banca: "CONSULPLAN", ano: 2023 },
+        { id: 7, enunciado: "Qual a finalidade da capa focalizadora no tubo de Raios-X?", alternativas: ["Dissipar o feixe de elétrons para o cátodo.", "Difundir o feixe de elétrons para além do ânodo.", "Esfriá-lo para a emissão termiônica.", "Aquecê-lo e prepará-lo para o impulso térmico.", "Confinar o feixe de elétrons em uma pequena área do ânodo."], correta: "E", tema: "Capa focalizadora / Foco", banca: "FUNDATEC", ano: 2023 },
+        { id: 8, enunciado: "Dentre os fatores de qualidade nas quais as imagens radiográficas são avaliadas, assinale a alternativa correta.", alternativas: ["Densidade: quantidade de 'negrume' na radiografia. Alta densidade transmite mais luz.", "Contraste: diferença entre áreas adjacentes. Contraste alto = diferença de densidade pequena.", "Resolução espacial: nitidez das estruturas, demonstrada pela clareza das bordas.", "Fatores geométricos: ponto focal pequeno resulta em maior opacidade geométrica.", "Distorção: representação do tamanho ou forma do objeto."], correta: "C", tema: "Qualidade da imagem / Resolução", banca: "VUNESP", ano: 2020 },
+        { id: 9, enunciado: "Sobre os princípios físicos envolvidos na produção de raios-X no tubo, é correto afirmar que:", alternativas: ["O cátodo é o polo positivo.", "O filamento se encontra no alvo anódico (polo negativo).", "O deslocamento de elétrons somente é estimulado quando a quilovoltagem é acionada.", "Compete ao cátodo a formação da nuvem de elétrons que irá se chocar com o alvo (polo positivo da ampola)."], correta: "D", tema: "Física / Produção de Rx", banca: "FADESP", ano: 2019 },
+        { id: 10, enunciado: "Acerca do efeito de inclinação anódica (efeito anódico):", alternativas: ["A intensidade da radiação emitida pela extremidade do cátodo é superior à do ânodo.", "A intensidade da radiação emitida pela extremidade do ânodo é superior à do cátodo.", "Esse efeito é conhecido como efeito fotoelétrico.", "O paciente deve ser posicionado com a região mais espessa na extremidade do ânodo."], correta: "A", tema: "Efeito anódico", banca: "FCC", ano: 2019 },
+        { id: 11, enunciado: "Em relação ao tubo (ampola) de raios X, é incorreto afirmar:", alternativas: ["Composto por envoltório de vidro pirex com vácuo.", "O catódio (cátodo) libera elétrons que se chocam no ânodo.", "A maioria dos tubos apresenta três filamentos com características distintas.", "O vácuo evita redução da velocidade dos elétrons e isola alta tensão."], correta: "C", tema: "Tubo de raios X / Filamentos", banca: "FUNDEP", ano: 2018 },
+        { id: 12, enunciado: "O tubo de raios X ou ampola possui os seguintes componentes, EXCETO:", alternativas: ["Filamento de cobre.", "Ânodo.", "Invólucro de vidro.", "Alvo de tungstênio."], correta: "A", tema: "Componentes / Materiais", banca: "FUNDEP", ano: 2017 },
+        // QUESTÃO 13 - ENUNCIADO COMPLETO COM AS AFIRMATIVAS I A IV, conforme PDF original
+        { id: 13, 
+          enunciado: "A filtração do feixe de raios X é importante para evitar o aumento de dose no paciente por baixas energias que não contribuem para a imagem. Com relação aos tipos de filtração existentes, analise as afirmativas abaixo e assinale a alternativa correta.", 
+          afirmativas: [
+              "I. Filtração inerente: folha de alumínio posicionada entre a ampola e o colimador.",
+              "II. Filtração adicional: filtração causada pela ampola e dos componentes dentro do tubo de raios X.",
+              "III. Filtros compensadores: filtros usados para produzir uma imagem uniforme.",
+              "IV. Filtração aumenta o valor da camada semi-redutora."
+          ],
+          alternativas: ["Estão corretas I e II", "Estão corretas I, II e III", "Estão corretas II e IV", "Estão corretas III e IV", "Estão corretas I e III"], 
+          correta: "D", 
+          tema: "Filtração / Tipos", 
+          banca: "IBFC", 
+          ano: 2016 
+        },
+        { id: 14, enunciado: "Sobre o tubo de raios X, assinale a alternativa correta.", alternativas: ["Molibdênio é o principal material para alvo devido ao alto número atômico.", "Os elétrons são emitidos quando os filamentos catódicos são aquecidos.", "O eletrodo positivo do tubo é denominado cátodo.", "O alvo dos raios X produzidos no cátodo é atingir a área do ânodo.", "O ânodo tem baixo ponto de fusão."], correta: "B", tema: "Tubo / Emissão de elétrons", banca: "COPEVE-UFAL", ano: 2016 },
+        { id: 15, enunciado: "Após a produção dos raios X, o feixe passa por lâmina de alumínio (filtração inerente). Sobre a filtração, é correto afirmar:", alternativas: ["Benéfica por absorver fótons de alta energia aumentando efeito fotoelétrico.", "Benéfica por absorver fótons de baixa energia diminuindo espalhamento Rayleigh.", "Benéfica por absorver fótons de baixa energia diminuindo espalhamento Compton.", "Ruim por absorver fótons de alta energia aumentando Compton.", "Ruim por absorver fótons de baixa energia aumentando Rayleigh."], correta: "B", tema: "Filtração / Espalhamento", banca: "IBFC", ano: 2016 },
+        { id: 16, enunciado: "Parâmetro ajustado no painel (mA). Quando ajustado, o operador está ajustando:", alternativas: ["Tensão no ânodo.", "Tensão no cátodo.", "Corrente no filamento.", "Corrente entre o ânodo e o cátodo."], correta: "C", tema: "Parâmetros / mA", banca: "CONSULPLAN", ano: 2015 },
+        { id: 17, enunciado: "Acerca dos tubos de raios-X, assinale a afirmativa correta.", alternativas: ["São preenchidos com óleo para aumentar condutividade eletrônica.", "A energia gerada depende diretamente da corrente aplicada no cátodo.", "O cátodo deve ser de baixo número atômico para aumentar produção.", "O cabeçote do aparelho tem como maior função oferecer proteção radiológica.", "Possuem alta eficiência: 99% dos elétrons viram radiação."], correta: "D", tema: "Proteção / Cabeçote", banca: "IDECAN", ano: 2014 },
+        { id: 18, enunciado: "Grade antidifusora (dispositivo do Dr. Gustavo Bucky). Indique a função dessa grade.", alternativas: ["Filtrar radiação secundária espalhada pelo paciente, evitando que atinja o filme e degrade contraste.", "Proteger o paciente dos raios X por redução de dose.", "Criar reflexão de raios X para não escapar.", "Refletir raios X para o filme radiográfico.", "Emitir luz quando exposto aos raios X."], correta: "A", tema: "Grade antidifusora", banca: "IADES", ano: 2014 },
+        { id: 19, enunciado: "Todas as alternativas abaixo estão corretas, EXCETO:", alternativas: ["Mudanças na miliamperagem alteram apenas a quantidade de raios.", "Mudanças na miliamperagem alteram a forma do espectro das radiações.", "Adicionando filtro ao feixe elimina mais radiação de baixa energia.", "Mudanças na kVp alteram a intensidade do feixe.", "Alterações na kVp possuem o mesmo efeito que um fator de 2 na mA."], correta: "B", tema: "Espectro / mA e kVp", banca: "NUCEPE", ano: 2011 },
+        { id: 20, enunciado: "Marque a alternativa que melhor descreve o efeito Anódico.", alternativas: ["Intensidade maior no ânodo do que no cátodo.", "O efeito anódico é menos pronunciado em filmes maiores usando pontos focais menores.", "A intensidade da radiação emitida pelo cátodo é maior do que a do ânodo.", "Quanto menor o ponto focal, menor o efeito anódico.", "A intensidade é igual entre cátodo e ânodo."], correta: "C", tema: "Efeito anódico", banca: "FGV", ano: 2010 }
+    ];
+
+    let respostasUsuario = new Array(questoes.length).fill(null);
+    let ultimoResultado = null;
+
+    const container = document.getElementById("questoes-container");
+    const nomeInput = document.getElementById("nomeAluno");
+
+    // Renderizar questões (com suporte para afirmativas adicionais na questão 13)
+    function renderizarQuestoes() {
+        container.innerHTML = "";
+        questoes.forEach((q, idx) => {
+            const card = document.createElement("div");
+            card.className = "questao-card";
+            const numSpan = document.createElement("div");
+            numSpan.className = "questao-num";
+            numSpan.innerText = `Questão ${q.id}`;
+            const bancaSpan = document.createElement("span");
+            bancaSpan.className = "banca-ano";
+            bancaSpan.innerText = `${q.banca} - ${q.ano}`;
+            numSpan.appendChild(bancaSpan);
+            card.appendChild(numSpan);
+
+            const enunciadoDiv = document.createElement("div");
+            enunciadoDiv.className = "enunciado";
+            enunciadoDiv.innerText = `${q.id}. ${q.enunciado}`;
+            card.appendChild(enunciadoDiv);
+
+            // Se houver afirmativas (caso da questão 13), exibe-as formatadas
+            if (q.afirmativas && Array.isArray(q.afirmativas)) {
+                const afDiv = document.createElement("div");
+                afDiv.style.margin = "12px 0 8px 20px";
+                afDiv.style.fontSize = "0.95rem";
+                q.afirmativas.forEach(af => {
+                    const p = document.createElement("div");
+                    p.innerText = af;
+                    p.style.marginBottom = "6px";
+                    afDiv.appendChild(p);
+                });
+                card.appendChild(afDiv);
+            }
+
+            const altDiv = document.createElement("div");
+            altDiv.className = "alternativas";
+            const letras = ["A", "B", "C", "D", "E"];
+            q.alternativas.forEach((alt, altIdx) => {
+                const letra = letras[altIdx];
+                const item = document.createElement("div");
+                item.className = "alt-item";
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = `q${idx}`;
+                radio.value = letra;
+                radio.id = `q${idx}_${letra}`;
+                if (respostasUsuario[idx] === letra) radio.checked = true;
+                radio.addEventListener("change", (e) => {
+                    if (e.target.checked) respostasUsuario[idx] = letra;
+                });
+                const label = document.createElement("label");
+                label.htmlFor = `q${idx}_${letra}`;
+                label.innerText = `${letra}) ${alt}`;
+                item.appendChild(radio);
+                item.appendChild(label);
+                altDiv.appendChild(item);
+            });
+            card.appendChild(altDiv);
+            container.appendChild(card);
+        });
+    }
+
+    function limparRespostas() {
+        respostasUsuario = new Array(questoes.length).fill(null);
+        renderizarQuestoes();
+        document.getElementById("resultadoPanel").style.display = "none";
+        document.getElementById("registroFeedback").style.display = "none";
+    }
+
+    // Salvar resultado no localStorage
+    function registrarResultadoInterno(nome, acertos, percentual, detalhes, total) {
+        const registro = {
+            nome: nome || "Anônimo",
+            data: new Date().toLocaleString(),
+            acertos: acertos,
+            total: total,
+            percentual: percentual.toFixed(1),
+            questoes: detalhes.map(d => ({ id: d.numero, acertou: d.acertou, userResp: d.userResp, correta: d.correta }))
+        };
+        let historico = localStorage.getItem("simulado_radiologia_historico");
+        let lista = historico ? JSON.parse(historico) : [];
+        lista.unshift(registro);
+        if (lista.length > 10) lista.pop();
+        localStorage.setItem("simulado_radiologia_historico", JSON.stringify(lista));
+        const feedbackDiv = document.getElementById("registroFeedback");
+        feedbackDiv.innerHTML = `📀 Resultado registrado internamente em ${registro.data}. Seu desempenho foi salvo (últimos 10 simulados).`;
+        feedbackDiv.style.display = "block";
+        setTimeout(() => {
+            if (feedbackDiv.style.display === "block") feedbackDiv.style.opacity = "0.8";
+        }, 3000);
+    }
+
+    function corrigirSimulado() {
+        let nomeAluno = nomeInput.value.trim();
+        if (nomeAluno === "") nomeAluno = "Não informado";
+
+        let acertos = 0;
+        let detalhes = [];
+        let errosPorTema = {};
+
+        for (let i = 0; i < questoes.length; i++) {
+            const q = questoes[i];
+            const respUser = respostasUsuario[i];
+            const correta = q.correta;
+            const isAcertou = (respUser === correta);
+            if (isAcertou) acertos++;
+            detalhes.push({
+                numero: q.id,
+                enunciado: q.enunciado,
+                userResp: respUser || "Não respondida",
+                correta: correta,
+                acertou: isAcertou,
+                tema: q.tema,
+                banca: q.banca,
+                ano: q.ano
+            });
+            if (!isAcertou) {
+                errosPorTema[q.tema] = (errosPorTema[q.tema] || 0) + 1;
+            }
+        }
+
+        const percentual = (acertos / questoes.length) * 100;
+        const desempenho = percentual >= 70 ? "⭐ Bom desempenho!" : (percentual >= 50 ? "📘 Atenção, pode melhorar!" : "⚠️ Revisão necessária!");
+
+        registrarResultadoInterno(nomeAluno, acertos, percentual, detalhes, questoes.length);
+
+        let htmlResultado = `
+            <div class="resultado-area" id="resultadoParaImprimir">
+                <div class="resultado-titulo">
+                    📊 Resultado Final - Aluno: ${nomeAluno}
+                    <span class="nota">${acertos}/${questoes.length} (${percentual.toFixed(1)}%)</span>
+                </div>
+                <p><strong>${desempenho}</strong> — ${percentual >= 70 ? "Continue praticando!" : "Estude os tópicos com mais erros abaixo."}</p>
+                
+                <div style="margin-top: 15px;"><strong>📋 Gabarito detalhado (Banca/Ano incluso):</strong></div>
+                <div class="gabarito-lista">
+        `;
+
+        detalhes.forEach(d => {
+            const status = d.acertou ? "✅" : "❌";
+            const userText = d.userResp !== "Não respondida" ? d.userResp : "—";
+            htmlResultado += `
+                <div class="gabarito-item">
+                    <span style="min-width: 55px;"><strong>Q${d.numero}</strong></span>
+                    <span style="flex:2;">${status} Sua: ${userText} | Correta: ${d.correta}</span>
+                    <span style="color:#3a6b8c; font-size:0.7rem; background:#eef; padding:2px 8px; border-radius:20px;">${d.banca} ${d.ano}</span>
+                    <span style="font-size:0.7rem; color:#1f5e7a;">${d.tema}</span>
+                </div>
+            `;
+        });
+
+        htmlResultado += `</div>`;
+
+        let melhoriasHtml = `<div class="melhorias"><strong>📌 O que você pode melhorar (assuntos com mais erros):</strong><ul>`;
+        if (Object.keys(errosPorTema).length === 0) {
+            melhoriasHtml += `<li>Parabéns! Você não errou nenhuma questão. Domina os equipamentos radiológicos!</li>`;
+        } else {
+            const temasOrdenados = Object.entries(errosPorTema).sort((a,b) => b[1] - a[1]);
+            for (let [tema, qtd] of temasOrdenados) {
+                melhoriasHtml += `<li><strong>${tema}</strong>: errou ${qtd} questão(ões). Revisar fundamentos sobre ${tema}.</li>`;
+            }
+            melhoriasHtml += `<li style="margin-top:8px;">💡 Sugestão: estude principalmente tubo de raios X, filtração, geradores e efeito anódico.</li>`;
+        }
+        melhoriasHtml += `</ul></div>`;
+
+        const dataAtual = new Date().toLocaleString();
+        const impressaoHtml = `
+            <div class="impressao-info">
+                <hr style="margin: 12px 0; opacity:0.3;">
+                <div><strong>🖨️ Relatório do simulado - ${dataAtual}</strong></div>
+                <div>👤 Aluno: ${nomeAluno} | ✅ Acertos: ${acertos}/${questoes.length} (${percentual.toFixed(1)}%)</div>
+                <div>📖 Gabarito comparado com suas respostas.</div>
+                <div>🔍 Tópicos com maior dificuldade: ${Object.keys(errosPorTema).length ? Object.keys(errosPorTema).slice(0,3).join(", ") : "Nenhum"}</div>
+                <button id="btnImprimirRelatorioPDF" style="margin-top: 10px; background:#2c5a6e; padding:6px 18px;">🖨️ Salvar/Imprimir como PDF</button>
+            </div>
+        `;
+
+        htmlResultado += melhoriasHtml;
+        htmlResultado += impressaoHtml;
+        htmlResultado += `</div>`;
+
+        const panel = document.getElementById("resultadoPanel");
+        panel.innerHTML = htmlResultado;
+        panel.style.display = "block";
+
+        const btnPDF = document.getElementById("btnImprimirRelatorioPDF");
+        if (btnPDF) {
+            btnPDF.addEventListener("click", () => {
+                const conteudo = document.getElementById("resultadoParaImprimir").cloneNode(true);
+                const botoes = conteudo.querySelectorAll("#btnImprimirRelatorioPDF");
+                botoes.forEach(btn => btn.remove());
+                const janela = window.open('', '_blank');
+                janela.document.write(`
+                    <html><head><title>Relatório Simulado - ${nomeAluno}</title>
+                    <style>body { font-family: 'Segoe UI', sans-serif; margin: 30px; } .resultado-area { border: 1px solid #0b3b5f; padding: 20px; } .gabarito-lista { max-height: none; } button { display: none; } .impressao-info button { display: none; }</style>
+                    </head><body>${conteudo.outerHTML}</body></html>
+                `);
+                janela.document.close();
+                janela.print();
+            });
+        }
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function imprimirPDFCompleto() {
+        const resultadoDiv = document.getElementById("resultadoPanel");
+        if (!resultadoDiv || resultadoDiv.style.display === "none") {
+            alert("Corrija o simulado primeiro para gerar o resultado antes de imprimir o PDF.");
+            return;
+        }
+        const conteudo = document.getElementById("resultadoParaImprimir").cloneNode(true);
+        const botoes = conteudo.querySelectorAll("button");
+        botoes.forEach(btn => btn.remove());
+        const janela = window.open('', '_blank');
+        janela.document.write(`
+            <html><head><title>Simulado Radiologia - Resultado</title>
+            <style>body { font-family: 'Segoe UI', sans-serif; margin: 30px; } .resultado-area { border: 1px solid #0b3b5f; padding: 20px; } .gabarito-lista { max-height: none; }</style>
+            </head><body>${conteudo.outerHTML}</body></html>
+        `);
+        janela.document.close();
+        janela.print();
+    }
+
+    document.getElementById("btnCorrigir").addEventListener("click", corrigirSimulado);
+    document.getElementById("btnLimpar").addEventListener("click", limparRespostas);
+    document.getElementById("btnImprimirPDF").addEventListener("click", imprimirPDFCompleto);
+
+    renderizarQuestoes();
+</script>
+</body>
+</html>
